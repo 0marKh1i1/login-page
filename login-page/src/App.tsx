@@ -2,16 +2,15 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import './App.css'
+import './App.css' 
 
 const csrfToken = Cookies.get('csrftoken');
-const navigate = useNavigate();
 const client = axios.create({
-  baseURL:'127.0.0.1:8000',
-  headers:{
+  baseURL: 'http://localhost:8000',
+  headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true, 
 });
 
 function App() {
@@ -20,9 +19,10 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorStr , setErrorStr] = useState<string>('');
+  const navigate = useNavigate();
 
    useEffect(() => {
-        client.get("/user/", {
+        client.get("/api/user/", {
             headers: {
                 'X-CSRFToken': csrfToken,
             }
@@ -42,7 +42,7 @@ function App() {
     event.preventDefault();
     try{
       const res = await client.post(
-        '/login/',
+        '/api/login/',
         {
           username,
           password,
@@ -54,7 +54,7 @@ function App() {
         }
       );
       setCurrentUser(res.data.user);
-      if(currentUser){navigate('/home');} 
+      if(res.data.user){/* navigate('/home'); */console.log('loged in '+currentUser);} 
     } catch(error){
       setErrorStr('Login failed. Please check your username and password.');
     } finally {
@@ -64,7 +64,8 @@ function App() {
   }
 
   if(loading){return(<> <div className='loading'> LOADING... </div> </>);}
-  if(currentUser){navigate('/home');} 
+  if(currentUser){/* navigate('/home'); */ console.log('loged in '+currentUser);
+  } 
 
   return (
     <>
